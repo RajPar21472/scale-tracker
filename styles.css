@@ -1,0 +1,6 @@
+.status-deployed { background-color: #d4edda; color: #155724; }
+.status-under-repair { background-color: #f8d7da; color: #721c24; }
+.status-ready-to-send { background-color: #fff3cd; color: #856404; }
+.table-container { max-height: 400px; overflow-y: auto; }
+.error { color: red; }
+.action-buttons { display: flex; gap: 5px; }

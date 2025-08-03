@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tea Leaf Scale Tracker</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+</head>
+<body>
+    <div class="container my-5">
+        <h1 class="mb-4 text-center">Tea Leaf Scale Tracker</h1>
+
+        <!-- Add Sale Form -->
+        <div class="card mb-4">
+            <div class="card-header">Add New Sale</div>
+            <div class="card-body">
+                <form id="saleForm">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="serialNumber" class="form-label">Serial Number</label>
+                            <input type="text" class="form-control" id="serialNumber" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="companyName" class="form-label">Company Name</label>
+                            <input type="text" class="form-control" id="companyName" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="agentName" class="form-label">Agent Name</label>
+                            <input type="text" class="form-control" id="agentName" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="customerName" class="form-label">Customer Name</label>
+                            <input type="text" class="form-control" id="customerName" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="telephone" class="form-label">Telephone Number</label>
+                            <input type="tel" class="form-control" id="telephone" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Add Sale</button>
+                </form>
+                <div id="saleError" class="error mt-2"></div>
+            </div>
+        </div>
+
+        <!-- Add Repair Form -->
+        <div class="card mb-4">
+            <div class="card-header">Log Repair Event</div>
+            <div class="card-body">
+                <form id="repairForm">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="repairSerialNumber" class="form-label">Serial Number</label>
+                            <input type="text" class="form-control" id="repairSerialNumber" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="issueDescription" class="form-label">Issue Description</label>
+                            <input type="text" class="form-control" id="issueDescription" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="sendDescription" class="form-label">Send Description (e.g., Courier Details)</label>
+                            <input type="text" class="form-control" id="sendDescription">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="repairStatus" class="form-label">Status</label>
+                            <select class="form-select" id="repairStatus" required>
+                                <option value="Under Repair">Under Repair</option>
+                                <option value="Ready to Send">Ready to Send</option>
+                                <option value="Deployed">Deployed</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Log Repair</button>
+                </form>
+                <div id="repairError" class="error mt-2"></div>
+            </div>
+        </div>
+
+        <!-- Search and Filter -->
+        <div class="card mb-4">
+            <div class="card-header">Search & Filter</div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label for="searchSerial" class="form-label">Search by Serial Number</label>
+                        <input type="text" class="form-control" id="searchSerial">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="filterCompany" class="form-label">Filter by Company</label>
+                        <select class="form-select" id="filterCompany">
+                            <option value="">All Companies</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="filterStatus" class="form-label">Filter by Status</label>
+                        <select class="form-select" id="filterStatus">
+                            <option value="">All Statuses</option>
+                            <option value="Deployed">Deployed</option>
+                            <option value="Under Repair">Under Repair</option>
+                            <option value="Ready to Send">Ready to Send</option>
+                        </select>
+                    </div>
+                </div>
+                <button class="btn btn-primary" onclick="exportToExcel()">Export to Excel</button>
+            </div>
+        </div>
+
+        <!-- Sales Table -->
+        <div class="card mb-4">
+            <div class="card-header">Sales Records</div>
+            <div class="card-body table-container">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Serial Number</th>
+                            <th>Company Name</th>
+                            <th>Agent Name</th>
+                            <th>Customer Name</th>
+                            <th>Telephone</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                            <th>Related Repairs</th>
+                        </tr>
+                    </thead>
+                    <tbody id="salesTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Repairs Table -->
+        <div class="card mb-4">
+            <div class="card-header">Repair Records</div>
+            <div class="card-body table-container">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Serial Number</th>
+                            <th>Company Name</th>
+                            <th>Issue Description</th>
+                            <th>Send Description</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                            <th>Related Sale</th>
+                        </tr>
+                    </thead>
+                    <tbody id="repairsTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Edit Modal -->
+        <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editModalLabel">Edit Record</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="editForm">
+                            <input type="hidden" id="editIndex">
+                            <input type="hidden" id="editLogType">
+                            <div class="mb-3">
+                                <label for="editSerialNumber" class="form-label">Serial Number</label>
+                                <input type="text" class="form-control" id="editSerialNumber" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="editCompanyName" class="form-label">Company Name</label>
+                                <input type="text" class="form-control" id="editCompanyName" required>
+                            </div>
+                            <div class="mb-3" id="editAgentNameGroup">
+                                <label for="editAgentName" class="form-label">Agent Name</label>
+                                <input type="text" class="form-control" id="editAgentName" required>
+                            </div>
+                            <div class="mb-3" id="editCustomerNameGroup">
+                                <label for="editCustomerName" class="form-label">Customer Name</label>
+                                <input type="text" class="form-control" id="editCustomerName" required>
+                            </div>
+                            <div class="mb-3" id="editTelephoneGroup">
+                                <label for="editTelephone" class="form-label">Telephone Number</label>
+                                <input type="tel" class="form-control" id="editTelephone" required>
+                            </div>
+                            <div class="mb-3" id="editIssueDescriptionGroup">
+                                <label for="editIssueDescription" class="form-label">Issue Description</label>
+                                <input type="text" class="form-control" id="editIssueDescription">
+                            </div>
+                            <div class="mb-3" id="editSendDescriptionGroup">
+                                <label for="editSendDescription" class="form-label">Send Description (e.g., Courier Details)</label>
+                                <input type="text" class="form-control" id="editSendDescription">
+                            </div>
+                            <div class="mb-3">
+                                <label for="editStatus" class="form-label">Status</label>
+                                <select class="form-select" id="editStatus" required>
+                                    <option value="Deployed">Deployed</option>
+                                    <option value="Under Repair">Under Repair</option>
+                                    <option value="Ready to Send">Ready to Send</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="editDate" class="form-label">Date</label>
+                                <input type="text" class="form-control" id="editDate" readonly>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" onclick="saveEdit()">Save changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
