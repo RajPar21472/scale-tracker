@@ -265,6 +265,30 @@ function addSaleOrRange(event) {
     updateCompanyFilter();
 }
 
+function downloadSampleCsv() {
+    try {
+        const sampleData = [
+            { serialNumber: "SN1001", companyName: "TeaCo", agentName: "John Doe", customerName: "Jane Smith", telephone: "1234567890", status: "Deployed", date: "2025-08-01" },
+            { serialNumber: "SN1002", companyName: "GreenLeaf", agentName: "Alice Brown", customerName: "Bob Wilson", telephone: "0987654321", status: "Deployed", date: "2025-08-01" },
+            { serialNumber: "SN1003", companyName: "TeaCo", agentName: "Mary Johnson", customerName: "Tom Davis", telephone: "5551234567", status: "Under Repair", date: "2025-08-02" }
+        ];
+        const csv = Papa.unparse(sampleData);
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'sample_sales_upload.csv';
+        a.click();
+        URL.revokeObjectURL(url);
+        document.getElementById('bulkUploadSuccess').textContent = 'Sample CSV downloaded successfully.';
+        document.getElementById('bulkUploadError').textContent = '';
+    } catch (error) {
+        console.error('Error downloading sample CSV:', error);
+        document.getElementById('bulkUploadError').textContent = 'Error downloading sample CSV. Please try again.';
+        document.getElementById('bulkUploadSuccess').textContent = '';
+    }
+}
+
 function bulkUploadSales(event) {
     event.preventDefault();
     const fileInput = document.getElementById('salesCsv');
