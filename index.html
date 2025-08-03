@@ -78,15 +78,18 @@
         <div class="card mb-4">
             <div class="card-header">Backup and Restore Data</div>
             <div class="card-body">
+                <div class="mb-3">
+                    <p><strong>Sync Data Across Browsers:</strong> Data is stored in your browser. To use the same data in another browser (e.g., Chrome to Firefox) or device, export the data here and import it in the other browser.</p>
+                </div>
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <button class="btn btn-primary" onclick="downloadBackup()">Download Backup (JSON)</button>
+                        <button class="btn btn-primary" onclick="downloadBackup()">Export Data for Sync</button>
                     </div>
                     <div class="col-md-6 mb-3">
                         <form id="restoreForm">
-                            <label for="restoreFile" class="form-label">Restore from Backup (JSON)</label>
+                            <label for="restoreFile" class="form-label">Import Data from Another Browser</label>
                             <input type="file" class="form-control" id="restoreFile" accept=".json" required>
-                            <button type="submit" class="btn btn-primary mt-2">Restore Data</button>
+                            <button type="submit" class="btn btn-primary mt-2">Import Data</button>
                         </form>
                     </div>
                 </div>
