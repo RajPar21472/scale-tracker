@@ -26,12 +26,16 @@ function loadData() {
     }
 }
 
-// Save data to localStorage
+// Save data to localStorage and prompt for backup
 function saveData() {
     try {
         localStorage.setItem('salesData', JSON.stringify(salesData));
         localStorage.setItem('repairsData', JSON.stringify(repairsData));
         console.log('Data saved to localStorage:', { salesData, repairsData });
+        // Prompt for backup download
+        if (confirm('Data has been updated. Would you like to export a JSON backup to sync with other browsers?')) {
+            downloadBackup();
+        }
     } catch (error) {
         console.error('Error saving data to localStorage:', error);
         document.getElementById('backupError').textContent = 'Error saving data to localStorage. Check browser storage limits.';
@@ -549,7 +553,7 @@ function downloadBackup() {
         a.download = `scale_tracker_backup_${new Date().toISOString().split('T')[0]}.json`;
         a.click();
         URL.revokeObjectURL(url);
-        document.getElementById('backupSuccess').textContent = 'Backup downloaded successfully.';
+        document.getElementById('backupSuccess').textContent = 'Backup downloaded successfully. Save this file to sync data with other browsers.';
         document.getElementById('backupError').textContent = '';
     } catch (error) {
         console.error('Error downloading backup:', error);
@@ -626,7 +630,7 @@ function restoreData(event) {
             saveData();
             updateTables();
             updateCompanyFilter();
-            backupSuccess.textContent = `Successfully restored ${salesData.length} sales and ${repairsData.length} repairs.`;
+            backupSuccess.textContent = `Successfully restored ${salesData.length} sales and ${repairsData.length} repairs. Export a new backup after making changes to sync with other browsers.`;
             backupError.textContent = '';
             document.getElementById('restoreForm').reset();
         } catch (error) {
