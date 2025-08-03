@@ -13,19 +13,27 @@
     <div class="container my-5">
         <h1 class="mb-4 text-center">Tea Leaf Scale Tracker</h1>
 
-        <!-- Add Sale Form -->
+        <!-- Add Sale or Range Form -->
         <div class="card mb-4">
-            <div class="card-header">Add New Sale</div>
+            <div class="card-header">Add New Sale or Range</div>
             <div class="card-body">
                 <form id="saleForm">
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label for="serialNumber" class="form-label">Serial Number</label>
-                            <input type="text" class="form-control" id="serialNumber" required>
+                            <label for="serialNumber" class="form-label">Serial Number (Single)</label>
+                            <input type="text" class="form-control" id="serialNumber" placeholder="e.g., SN0001">
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="companyName" class="form-label">Company Name</label>
                             <input type="text" class="form-control" id="companyName" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="startSerial" class="form-label">Start Serial Number (Range)</label>
+                            <input type="text" class="form-control" id="startSerial" placeholder="e.g., SN0001">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="endSerial" class="form-label">End Serial Number (Range)</label>
+                            <input type="text" class="form-control" id="endSerial" placeholder="e.g., SN0100">
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="agentName" class="form-label">Agent Name</label>
@@ -40,9 +48,47 @@
                             <input type="tel" class="form-control" id="telephone" required>
                         </div>
                     </div>
-                    <button type="submit" class="btn btn-primary">Add Sale</button>
+                    <button type="submit" class="btn btn-primary">Add Sale/Range</button>
                 </form>
                 <div id="saleError" class="error mt-2"></div>
+                <div id="saleSuccess" class="success mt-2"></div>
+            </div>
+        </div>
+
+        <!-- Bulk Upload Sales -->
+        <div class="card mb-4">
+            <div class="card-header">Bulk Upload Sales (CSV)</div>
+            <div class="card-body">
+                <form id="bulkUploadForm">
+                    <div class="mb-3">
+                        <label for="salesCsv" class="form-label">Upload Sales CSV (serialNumber,companyName,agentName,customerName,telephone,status,date)</label>
+                        <input type="file" class="form-control" id="salesCsv" accept=".csv" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Upload Sales</button>
+                </form>
+                <div id="bulkUploadError" class="error mt-2"></div>
+                <div id="bulkUploadSuccess" class="success mt-2"></div>
+            </div>
+        </div>
+
+        <!-- Backup and Restore -->
+        <div class="card mb-4">
+            <div class="card-header">Backup and Restore Data</div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <button class="btn btn-primary" onclick="downloadBackup()">Download Backup (JSON)</button>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <form id="restoreForm">
+                            <label for="restoreFile" class="form-label">Restore from Backup (JSON)</label>
+                            <input type="file" class="form-control" id="restoreFile" accept=".json" required>
+                            <button type="submit" class="btn btn-primary mt-2">Restore Data</button>
+                        </form>
+                    </div>
+                </div>
+                <div id="backupError" class="error mt-2"></div>
+                <div id="backupSuccess" class="success mt-2"></div>
             </div>
         </div>
 
@@ -110,11 +156,14 @@
 
         <!-- Sales Table -->
         <div class="card mb-4">
-            <div class="card-header">Sales Records</div>
+            <div class="card-header">Sales Records
+                <button class="btn btn-danger btn-sm float-end" onclick="deleteSelectedSales()">Delete Selected</button>
+            </div>
             <div class="card-body table-container">
                 <table class="table table-striped">
                     <thead>
                         <tr>
+                            <th><input type="checkbox" id="selectAllSales" onclick="toggleSelectAll('sales')"></th>
                             <th>Serial Number</th>
                             <th>Company Name</th>
                             <th>Agent Name</th>
@@ -128,6 +177,8 @@
                     </thead>
                     <tbody id="salesTableBody"></tbody>
                 </table>
+                <div id="deleteSalesSuccess" class="success mt-2"></div>
+                <div id="selectAllMessage" class="success mt-2"></div>
             </div>
         </div>
 
