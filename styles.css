@@ -3,4 +3,5 @@
 .status-ready-to-send { background-color: #fff3cd; color: #856404; }
 .table-container { max-height: 400px; overflow-y: auto; }
 .error { color: red; }
+.success { color: green; }
 .action-buttons { display: flex; gap: 5px; }
