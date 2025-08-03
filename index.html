@@ -64,7 +64,10 @@
                         <label for="salesCsv" class="form-label">Upload Sales CSV (serialNumber,companyName,agentName,customerName,telephone,status,date)</label>
                         <input type="file" class="form-control" id="salesCsv" accept=".csv" required>
                     </div>
-                    <button type="submit" class="btn btn-primary">Upload Sales</button>
+                    <div class="mb-3">
+                        <button type="submit" class="btn btn-primary">Upload Sales</button>
+                        <button type="button" class="btn btn-secondary" onclick="downloadSampleCsv()">Download Sample CSV</button>
+                    </div>
                 </form>
                 <div id="bulkUploadError" class="error mt-2"></div>
                 <div id="bulkUploadSuccess" class="success mt-2"></div>
